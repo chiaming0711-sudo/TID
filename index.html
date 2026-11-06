@@ -13,7 +13,7 @@ main{max-width:980px;margin:18px auto;padding:0 14px 34px;display:grid;grid-temp
 @media(max-width:760px){main{display:block;margin:12px auto;padding:0 10px 24px}.preview-panel{position:static;margin-top:14px}.paper-wrap{max-height:none}.panel{padding:14px}.grid,.grid.three{grid-template-columns:minmax(0,1fr)}.grid input,.grid textarea{min-width:0}.optiongrid.three{grid-template-columns:repeat(2,minmax(0,1fr))}header{position:static}}
 @media(max-width:420px){.grid,.grid.three{grid-template-columns:1fr}.optiongrid.three{grid-template-columns:1fr 1fr}.actions button{font-size:13px}.signature-title{width:100%}.signature-top .sig-actions button{font-size:12px;padding:9px 10px}}
 @page{size:A4 portrait;margin:10mm}
-@media print{body{background:white}header,main>.form-panel,.preview-caption,.fineprint,.toast{display:none!important}main{display:block;max-width:none;margin:0;padding:0}.preview-panel{display:block;position:static;margin:0;padding:0;box-shadow:none;border-radius:0}.preview-panel.panel{padding:0}.paper-wrap{max-height:none;overflow:visible;padding:0;background:white;border-radius:0}.paper-wrap svg{width:190mm;height:268.6mm;box-shadow:none}}
+@media print{body{background:white}header,main>.form-panel,.preview-caption,.fineprint,.toast{display:none!important}main{display:block;max-width:none;margin:0;padding:0}.preview-panel{display:block;position:static;margin:0;padding:0;box-shadow:none;border-radius:0}.preview-panel.panel{padding:0}.paper-wrap{max-height:none;overflow:visible;padding:0;background:white;border-radius:0}.paper-wrap svg{width:190mm;height:268.6mm;box-shadow:none;page-break-after:always;break-after:page}.paper-wrap svg:last-child{page-break-after:auto;break-after:auto}}
 </style>
 </head>
 <body>
@@ -82,53 +82,59 @@ document.getElementById('clearSignature').addEventListener('click',()=>{if(activ
 document.getElementById('cancelSignature').addEventListener('click',()=>closeSignature(false));document.getElementById('confirmSignature').addEventListener('click',()=>closeSignature(true));
 document.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',()=>{const n=b.dataset.clear;paths[n]=[];paintSignaturePreview(n);refresh()}));
 function val(id){return document.getElementById(id).value.trim()}
-function text(x,y,s,size=10,fill='#20303b',weight=400){return `<text x="${x}" y="${y}" font-family="Microsoft JhengHei,Noto Sans TC,sans-serif" font-size="${size}" font-weight="${weight}" fill="${fill}">${safe(s)}</text>`}
+function text(x,y,s,size=12,fill='#20303b',weight=400){return `<text x="${x}" y="${y}" font-family="Microsoft JhengHei,Noto Sans TC,sans-serif" font-size="${size}" font-weight="${weight}" fill="${fill}">${safe(s)}</text>`}
 function ln(x1,y1,x2,y2,stroke='#d9e1e7',width=1){return `<path d="M${x1} ${y1}H${x2}" stroke="${stroke}" stroke-width="${width}"/>`}
 function box(x,y,w,h,stroke='#d9e1e7',fill='none',r=2){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" stroke="${stroke}"/>`}
-function section(y,title){return `${box(42,y,710,20,'#f2f5f7','#f2f5f7',2)}<rect x="42" y="${y}" width="4" height="20" rx="2" fill="#183b56"/>${text(54,y+14,title,10,'#183b56',700)}`}
-function field(x,y,w,label,value){return `${text(x,y,label,8,'#607482',600)}${text(x,y+15,value||'',9,'#20303b')}${ln(x,y+20,x+w,y+20)}`}
-function signPath(name,x,y,w,h){return paths[name].map(st=>{if(!st.length)return'';let d=`M${x+st[0].x/1400*w} ${y+st[0].y/700*h}`;for(let i=1;i<st.length;i++)d+=` L${x+st[i].x/1400*w} ${y+st[i].y/700*h}`;return `<path d="${d}" fill="none" stroke="#153b55" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`}).join('')}
-function render(){let a=[];a.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" role="img" aria-label="安裝報告書預覽"><rect width="794" height="1123" fill="white"/>`);
-a.push(text(42,30,'TID  /  啟益科技',9,'#607482',700),text(42,58,'啟益科技股份有限公司',21,'#183b56',700),text(42,80,'安裝報告書',14,'#20303b',600),field(620,70,132,'日期',val('date')));a.push(ln(42,94,752,94,'#183b56',1.5),text(42,108,'現場填寫後，請客戶確認內容並於下方簽名。',8,'#607482'));
+function section(y,title){return `${box(42,y,710,26,'#e5ebef','#f2f5f7',3)}<rect x="42" y="${y}" width="5" height="26" rx="2" fill="#183b56"/>${text(56,y+18,title,15,'#183b56',700)}`}
+function field(x,y,w,label,value){return `${text(x,y,label,12,'#607482',600)}${text(x,y+18,value||'',14,'#20303b')}${ln(x,y+28,x+w,y+28)}`}
+function mark(x,y,checked,size=14){let out=box(x,y-size+2,size,size,checked?'#183b56':'#607482',checked?'#183b56':'white',2);if(checked)out+=`<path d="M${x+3} ${y-size/2+2}l3 3 6-7" stroke="white" stroke-width="1.8" fill="none"/>`;return out}
+function signPath(name,x,y,w,h){return paths[name].map(st=>{if(!st.length)return'';let d=`M${x+st[0].x/1400*w} ${y+st[0].y/700*h}`;for(let i=1;i<st.length;i++)d+=` L${x+st[i].x/1400*w} ${y+st[i].y/700*h}`;return `<path d="${d}" fill="none" stroke="#153b55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`}).join('')}
+function wrapLines(s,max=58,maxLines=8){let out=[];while(s.length>max){out.push(s.slice(0,max));s=s.slice(max)}if(s)out.push(s);return out.slice(0,maxLines)}
+function reportHeader(a,continued,page){a.push(`<svg class="report-page" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" role="img" aria-label="安裝報告書第${page}頁"><rect width="794" height="1123" fill="white"/>`);a.push(text(42,32,'TID  /  啟益科技',12,'#607482',700),text(42,65,'安裝報告書',27,'#183b56',700));if(continued)a.push(text(190,64,'（續）',16,'#607482',500));a.push(field(620,58,132,'日期',val('date')),ln(42,103,752,103,'#183b56',1.5))}
+function render(){let pages=[];
+let a=[];reportHeader(a,false,1);
 a.push(section(120,'01｜客戶與設備資料'));
-a.push(field(42,153,400,'公司名稱',val('company')),field(456,153,170,'聯絡電話',val('phone')),field(640,153,112,'傳真',val('fax')));
-a.push(field(42,187,710,'地址',val('address')));
-a.push(field(42,221,220,'現場聯絡人',val('contact')),field(274,221,128,'電話分機',val('extension')),field(416,221,150,'機種品牌',val('brand')),field(580,221,172,'機器型號',val('model')));
-a.push(field(42,255,710,'機器序號',val('serial')));
-a.push(field(42,289,220,'油墨型號',val('inkType')),field(274,289,220,'稀釋液型號',val('thinnerType')),field(506,289,246,'清潔液型號',val('cleanerType')));
-a.push(section(315,'02｜現場狀況與安裝設定'));
-a.push(field(42,348,210,'同步器解析度',val('resolution')),field(274,348,210,'生產速度',val('productionSpeed')),field(506,348,246,'輸送速度',val('conveyorSpeed')));
-
-a.push(section(382,'03｜檢查項目與配件'));
-a.push(text(54,420,'機器檢查（可複選）',9,'#183b56',700),text(410,420,'配件確認（填數量）',9,'#183b56',700),`<path d="M397 405V574" stroke="#d9e1e7"/>`);
-issueList.forEach((s,i)=>{let x=54,y=442+i*18;a.push(box(x,y-9,10,10,document.getElementById(`issue${i}`).checked?'#183b56':'#607482',document.getElementById(`issue${i}`).checked?'#183b56':'none',1));if(document.getElementById(`issue${i}`).checked)a.push(`<path d="M${x+2} ${y-4}l2 2 4-5" stroke="white" stroke-width="1.3" fill="none"/>`);a.push(text(x+16,y,s,8))});
-accessoryList.forEach(([s,u],i)=>{let col=i<7?0:1,row=i%7,x=410+col*172,y=442+row*18,v=val(`acc${i}`),checked=document.getElementById(`accCheck${i}`).checked;a.push(box(x,y-9,10,10,checked?'#183b56':'#607482',checked?'#183b56':'none',1));if(checked)a.push(`<path d="M${x+2} ${y-4}l2 2 4-5" stroke="white" stroke-width="1.3" fill="none"/>`);a.push(text(x+16,y,s,7.7));a.push(ln(x+82,y+1,x+111,y+1));if(v)a.push(text(x+83,y,v,7.7));if(u)a.push(text(x+116,y,u,7.7))});
-a.push(box(42,579,350,68,'#d9e1e7','white',3),box(402,579,350,68,'#d9e1e7','white',3),text(52,596,'機器問題說明',8,'#183b56',700),text(412,596,'配件問題說明',8,'#183b56',700));
-function wrapLines(s,max=43){let out=[];while(s.length>max){out.push(s.slice(0,max));s=s.slice(max)}if(s)out.push(s);return out.slice(0,4)}
-wrapLines(val('machineNotes')).forEach((s,i)=>a.push(text(52,613+i*12,s,8)));wrapLines(val('accessoryNotes')).forEach((s,i)=>a.push(text(412,613+i*12,s,8)));
-a.push(section(662,'04｜安裝測試結果'));
-results.forEach(([label,opts],i)=>{let y=699+i*25;a.push(text(46,y,label,8.5,'#20303b',600),ln(42,y+8,752,y+8));opts.forEach((o,j)=>{let x=250+j*168,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===o;a.push(box(x,y-10,10,10,checked?'#183b56':'#607482',checked?'#183b56':'none',1));if(checked)a.push(`<path d="M${x+2} ${y-5}l2 2 4-5" stroke="white" stroke-width="1.3" fill="none"/>`);a.push(text(x+15,y,o,8))})});
-a.push(ln(42,799,752,799,'#183b56',1),text(46,818,'工程師簽名／日期',9,'#183b56',700),text(408,818,'客戶簽名／日期',9,'#183b56',700));
-a.push(box(42,829,350,88,'#d9e1e7','white',3),box(402,829,350,88,'#d9e1e7','white',3),(val('engineerName')?text(52,847,val('engineerName'),8,'#607482'):''),(val('customerName')?text(412,847,val('customerName'),8,'#607482'):''));
-a.push(signPath('engineer',52,837,330,63),signPath('customer',412,837,330,63),text(246,911,'日期：'+(val('date')||'____ / ____ / ____'),7,'#607482'),text(606,911,'日期：'+(val('date')||'____ / ____ / ____'),7,'#607482'));
-a.push(box(42,929,710,65,'#d9e1e7','white',3),text(52,946,'備註',8,'#183b56',700));wrapLines(val('notes')).forEach((s,i)=>a.push(text(52,963+i*12,s,8)));
-a.push(`</svg>`);
-document.getElementById('paper').innerHTML=a.join('')}
+a.push(field(42,166,400,'公司名稱',val('company')),field(456,166,170,'聯絡電話',val('phone')),field(640,166,112,'傳真',val('fax')));
+a.push(field(42,206,710,'地址',val('address')));
+a.push(field(42,246,220,'現場聯絡人',val('contact')),field(274,246,128,'電話分機',val('extension')),field(416,246,150,'機種品牌',val('brand')),field(580,246,172,'機器型號',val('model')));
+a.push(field(42,286,710,'機器序號',val('serial')));
+a.push(field(42,326,220,'油墨型號',val('inkType')),field(274,326,220,'稀釋液型號',val('thinnerType')),field(506,326,246,'清潔液型號',val('cleanerType')));
+a.push(section(390,'02｜現場狀況與安裝設定'));
+a.push(field(42,435,210,'同步器解析度',val('resolution')),field(274,435,210,'生產速度',val('productionSpeed')),field(506,435,246,'輸送速度',val('conveyorSpeed')));
+a.push(section(500,'03｜機器檢查'));
+issueList.forEach((label,i)=>{let col=i<4?0:1,row=i%4,x=54+col*356,y=562+row*50,checked=document.getElementById(`issue${i}`).checked;a.push(mark(x,y,checked,15),text(x+24,y,label,14,'#20303b'))});
+a.push(section(790,'備註'),box(42,830,710,200,'#cfd9df','white',3),text(54,856,'其他補充事項',10,'#607482',600));wrapLines(val('notes'),50,8).forEach((line,i)=>a.push(text(54,881+i*17,line,13.5)));
+a.push(text(684,1084,'第 1 頁 / 共 2 頁',10,'#607482'),'</svg>');pages.push(a.join(''));
+let b=[];reportHeader(b,true,2);
+b.push(section(120,'03｜配件確認與問題說明'),text(54,165,'請勾選已確認的配件並填寫數量',10,'#607482'));
+accessoryList.forEach(([label,unit],i)=>{let col=i<7?0:1,row=i%7,x=54+col*356,y=205+row*36,checked=document.getElementById(`accCheck${i}`).checked,value=val(`acc${i}`);b.push(mark(x,y,checked,15),text(x+24,y,label,11.5));b.push(ln(x+138,y+3,x+199,y+3));if(value)b.push(text(x+143,y,value,14));if(unit)b.push(text(x+207,y,unit,14))});
+b.push(box(42,465,350,125,'#cfd9df','white',3),box(402,465,350,125,'#cfd9df','white',3),text(54,489,'機器問題說明',13,'#183b56',700),text(414,489,'配件問題說明',13,'#183b56',700));
+wrapLines(val('machineNotes'),24,4).forEach((line,i)=>b.push(text(54,514+i*20,line,13.2)));wrapLines(val('accessoryNotes'),24,4).forEach((line,i)=>b.push(text(414,514+i*20,line,13.2)));
+b.push(section(610,'04｜安裝測試結果'));
+results.forEach(([label,opts],i)=>{let y=670+i*44;b.push(text(46,y,label,14,'#20303b',600),ln(42,y+17,752,y+17));opts.forEach((option,j)=>{let x=240+j*174,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===option;b.push(mark(x,y,checked,16),text(x+24,y,option,13.5,'#20303b'))})});
+b.push(section(850,'05｜簽名確認'));
+b.push(text(46,899,'工程師簽名'+(val('engineerName')?'：'+val('engineerName'):''),13,'#183b56',700),text(408,899,'客戶簽名'+(val('customerName')?'：'+val('customerName'):''),13,'#183b56',700));
+b.push(box(42,912,350,118,'#cfd9df','white',3),box(402,912,350,118,'#cfd9df','white',3),signPath('engineer',52,930,330,70),signPath('customer',412,930,330,70));
+b.push(text(52,1055,'日期：'+(val('date')||'____ / ____ / ____'),12,'#607482'),text(412,1055,'日期：'+(val('date')||'____ / ____ / ____'),12,'#607482'),text(684,1084,'第 2 頁 / 共 2 頁',10,'#607482'),'</svg>');pages.push(b.join(''));
+document.getElementById('paper').innerHTML=pages.join('')}
 function refresh(){render()}
 document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',refresh));document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el=>el.addEventListener('change',refresh));
 function notify(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
-function renderFormCanvas(){return new Promise((resolve,reject)=>{const svg=document.querySelector('#paper svg'),xml=new XMLSerializer().serializeToString(svg),blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=1588;cv.height=2246;const ctx=cv.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(url);resolve(cv)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('render failed'))};img.src=url})}
+function renderFormCanvases(){const svgs=[...document.querySelectorAll('#paper svg')];return Promise.all(svgs.map(svg=>new Promise((resolve,reject)=>{const xml=new XMLSerializer().serializeToString(svg),blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=1588;cv.height=2246;const ctx=cv.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(url);resolve(cv)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('render failed'))};img.src=url}))) }
+function combinePages(pages){const cv=document.createElement('canvas');cv.width=pages[0].width;cv.height=pages[0].height*pages.length;const ctx=cv.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);pages.forEach((page,i)=>ctx.drawImage(page,0,i*page.height));return cv}
 function canvasBlob(canvas,type,quality){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('export failed')),type,quality))}
 function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
 function isMobileDevice(){return Boolean(navigator.userAgentData?.mobile)||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(/Macintosh/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1)}
 async function shareOrDownload(blob,name,type,title,success,fallback){if(!isMobileDevice()){downloadBlob(blob,name);notify(type==='application/pdf'?'PDF 已下載，請在電腦版 LINE 聊天視窗附加檔案傳送':'PNG 已下載，請在 LINE 聊天視窗附加檔案傳送');return}const file=new File([blob],name,{type});try{if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title});notify(success);return}}catch(e){if(e.name==='AbortError')return}downloadBlob(blob,name);notify(fallback)}
-async function exportPng(){try{const cv=await renderFormCanvas(),blob=await canvasBlob(cv,'image/png');await shareOrDownload(blob,'安裝報告書.png','image/png','安裝報告書','已開啟手機分享選單','PNG 已下載，請到手機下載項目查看')}catch(e){notify('匯出圖片失敗，請稍後再試')}}
-function makePdfBlob(canvas){const jpgUrl=canvas.toDataURL('image/jpeg',0.94),binary=atob(jpgUrl.split(',')[1]),jpeg=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)jpeg[i]=binary.charCodeAt(i);const enc=new TextEncoder(),chunks=[];let length=0;const push=b=>{chunks.push(b);length+=b.length};const offsets=[0];push(enc.encode('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'));const obj=(n,body)=>{offsets[n]=length;push(enc.encode(`${n} 0 obj\n${body}\nendobj\n`))};obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');offsets[4]=length;push(enc.encode(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`));push(jpeg);push(enc.encode('\nendstream\nendobj\n'));const content='q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n';obj(5,`<< /Length ${enc.encode(content).length} >>\nstream\n${content}endstream`);const xref=length;let table='xref\n0 6\n0000000000 65535 f \n';for(let i=1;i<=5;i++)table+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';table+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;push(enc.encode(table));return new Blob(chunks,{type:'application/pdf'})}
-async function sharePdf(){try{const cv=await renderFormCanvas(),blob=makePdfBlob(cv);await shareOrDownload(blob,'安裝報告書.pdf','application/pdf','安裝報告書','已開啟分享選單，請選 LINE 傳送','PDF 已下載；可從手機檔案選擇分享至 LINE')}catch(e){notify('產生 PDF 失敗，請改用列印／另存 PDF')}}
+async function exportPng(){try{const pages=await renderFormCanvases(),cv=combinePages(pages),blob=await canvasBlob(cv,'image/png');await shareOrDownload(blob,'安裝報告書.png','image/png','安裝報告書','已開啟手機分享選單','PNG 已下載，請到手機下載項目查看')}catch(e){notify('匯出圖片失敗，請稍後再試')}}
+function makePdfBlob(canvases){const enc=new TextEncoder(),chunks=[];let length=0;const push=b=>{chunks.push(b);length+=b.length};const count=2+canvases.length*3,offsets=Array(count+1).fill(0);push(enc.encode('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'));const obj=(n,body)=>{offsets[n]=length;push(enc.encode(`${n} 0 obj\n${body}\nendobj\n`))};obj(1,'<< /Type /Catalog /Pages 2 0 R >>');const refs=canvases.map((_,i)=>`${3+i*3} 0 R`).join(' ');obj(2,`<< /Type /Pages /Kids [${refs}] /Count ${canvases.length} >>`);canvases.forEach((canvas,i)=>{const page=3+i*3,image=page+1,contentObj=page+2,jpgUrl=canvas.toDataURL('image/jpeg',0.96),binary=atob(jpgUrl.split(',')[1]),jpeg=new Uint8Array(binary.length);for(let j=0;j<binary.length;j++)jpeg[j]=binary.charCodeAt(j);obj(page,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${image} 0 R >> >> /Contents ${contentObj} 0 R >>`);offsets[image]=length;push(enc.encode(`${image} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`));push(jpeg);push(enc.encode('\nendstream\nendobj\n'));const stream='q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n';obj(contentObj,`<< /Length ${enc.encode(stream).length} >>\nstream\n${stream}endstream`) });const xref=length;let table=`xref\n0 ${count+1}\n0000000000 65535 f \n`;for(let i=1;i<=count;i++)table+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';table+=`trailer\n<< /Size ${count+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;push(enc.encode(table));return new Blob(chunks,{type:'application/pdf'})}
+async function sharePdf(){try{const canvases=await renderFormCanvases(),blob=makePdfBlob(canvases);await shareOrDownload(blob,'安裝報告書.pdf','application/pdf','安裝報告書','已開啟分享選單，請選 LINE 傳送','PDF 已下載；可從手機檔案選擇分享至 LINE')}catch(e){notify('產生 PDF 失敗，請改用列印／另存 PDF')}}
 document.getElementById('savePng').addEventListener('click',exportPng);document.getElementById('savePdf').addEventListener('click',()=>window.print());document.getElementById('sharePdf').addEventListener('click',sharePdf);
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
+
 
 
 
