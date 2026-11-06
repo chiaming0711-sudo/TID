@@ -102,7 +102,7 @@ a.push(field(42,348,210,'同步器解析度',val('resolution')),field(274,348,21
 a.push(section(382,'03｜檢查項目與配件'));
 a.push(text(54,420,'機器檢查（可複選）',9,'#183b56',700),text(410,420,'配件確認（填數量）',9,'#183b56',700),`<path d="M397 405V574" stroke="#d9e1e7"/>`);
 issueList.forEach((s,i)=>{let x=54,y=442+i*18;a.push(box(x,y-9,10,10,document.getElementById(`issue${i}`).checked?'#183b56':'#607482',document.getElementById(`issue${i}`).checked?'#183b56':'none',1));if(document.getElementById(`issue${i}`).checked)a.push(`<path d="M${x+2} ${y-4}l2 2 4-5" stroke="white" stroke-width="1.3" fill="none"/>`);a.push(text(x+16,y,s,8))});
-accessoryList.forEach(([s,u],i)=>{let col=i<7?0:1,row=i%7,x=410+col*172,y=470+row*18,v=val(`acc${i}`),checked=document.getElementById(`accCheck${i}`).checked;a.push(box(x,y-9,10,10,checked?'#183b56':'#607482',checked?'#183b56':'none',1));if(checked)a.push(`<path d="M${x+2} ${y-4}l2 2 4-5" stroke="white" stroke-width="1.3" fill="none"/>`);a.push(text(x+16,y,s,7.7));a.push(ln(x+82,y+1,x+111,y+1));if(v)a.push(text(x+83,y,v,7.7));if(u)a.push(text(x+116,y,u,7.7))});
+accessoryList.forEach(([s,u],i)=>{let col=i<7?0:1,row=i%7,x=410+col*172,y=442+row*18,v=val(`acc${i}`),checked=document.getElementById(`accCheck${i}`).checked;a.push(box(x,y-9,10,10,checked?'#183b56':'#607482',checked?'#183b56':'none',1));if(checked)a.push(`<path d="M${x+2} ${y-4}l2 2 4-5" stroke="white" stroke-width="1.3" fill="none"/>`);a.push(text(x+16,y,s,7.7));a.push(ln(x+82,y+1,x+111,y+1));if(v)a.push(text(x+83,y,v,7.7));if(u)a.push(text(x+116,y,u,7.7))});
 a.push(box(42,579,350,68,'#d9e1e7','white',3),box(402,579,350,68,'#d9e1e7','white',3),text(52,596,'機器問題說明',8,'#183b56',700),text(412,596,'配件問題說明',8,'#183b56',700));
 function wrapLines(s,max=43){let out=[];while(s.length>max){out.push(s.slice(0,max));s=s.slice(max)}if(s)out.push(s);return out.slice(0,4)}
 wrapLines(val('machineNotes')).forEach((s,i)=>a.push(text(52,613+i*12,s,8)));wrapLines(val('accessoryNotes')).forEach((s,i)=>a.push(text(412,613+i*12,s,8)));
@@ -128,6 +128,7 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
 
 
 
