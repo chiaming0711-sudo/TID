@@ -86,7 +86,7 @@ function text(x,y,s,size=12,fill='#20303b',weight=400){return `<text x="${x}" y=
 function ln(x1,y1,x2,y2,stroke='#d9e1e7',width=1){return `<path d="M${x1} ${y1}H${x2}" stroke="${stroke}" stroke-width="${width}"/>`}
 function box(x,y,w,h,stroke='#d9e1e7',fill='none',r=2){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" stroke="${stroke}"/>`}
 function section(y,title){return `${box(42,y,710,26,'#e5ebef','#f2f5f7',3)}<rect x="42" y="${y}" width="5" height="26" rx="2" fill="#183b56"/>${text(56,y+18,title,15,'#183b56',700)}`}
-function field(x,y,w,label,value){return `${text(x,y,label,11.5,'#607482',600)}${text(x,y+14,value||'',13,'#20303b')}${ln(x,y+22,x+w,y+22)}`}
+function field(x,y,w,label,value){return `${text(x,y,label,12.5,'#607482',600)}${text(x,y+14,value||'',14.5,'#20303b')}${ln(x,y+22,x+w,y+22)}`}
 function mark(x,y,checked,size=14){let out=box(x,y-size+2,size,size,checked?'#183b56':'#607482',checked?'#183b56':'white',2);if(checked)out+=`<path d="M${x+3} ${y-size/2+2}l3 3 6-7" stroke="white" stroke-width="1.8" fill="none"/>`;return out}
 function signPath(name,x,y,w,h){return paths[name].map(st=>{if(!st.length)return'';let d=`M${x+st[0].x/1400*w} ${y+st[0].y/700*h}`;for(let i=1;i<st.length;i++)d+=` L${x+st[i].x/1400*w} ${y+st[i].y/700*h}`;return `<path d="${d}" fill="none" stroke="#153b55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`}).join('')}
 function wrapLines(s,max=58,maxLines=8){let out=[];while(s.length>max){out.push(s.slice(0,max));s=s.slice(max)}if(s)out.push(s);return out.slice(0,maxLines)}
@@ -102,22 +102,22 @@ a.push(section(350,'02｜現場狀況與安裝設定'));
 a.push(field(42,391,210,'同步器解析度',val('resolution')),field(274,391,210,'生產速度',val('productionSpeed')),field(506,391,246,'輸送速度',val('conveyorSpeed')));
 a.push(section(435,'03｜檢查項目與配件'));
 a.push(text(54,483,'機器檢查（可複選）',10.5,'#183b56',700),text(410,483,'配件確認（勾選並填數量）',10.5,'#183b56',700),`<path d="M397 471V624" stroke="#d9e1e7"/>`);
-issueList.forEach((label,i)=>{let y=501+i*17,x=54,checked=document.getElementById(`issue${i}`).checked;a.push(mark(x,y,checked,12),text(x+20,y,label,10.5,'#20303b'))});
-accessoryList.forEach(([label,unit],i)=>{let col=i<7?0:1,row=i%7,x=410+col*170,y=501+row*18,checked=document.getElementById(`accCheck${i}`).checked,value=val(`acc${i}`);a.push(mark(x,y,checked,12),text(x+18,y,label,10.5));a.push(ln(x+88,y+2,x+112,y+2));if(value)a.push(text(x+89,y,value,10.5));if(unit)a.push(text(x+116,y,unit,10.5))});
-a.push(box(42,644,350,64,'#cfd9df','white',3),box(402,644,350,64,'#cfd9df','white',3),text(52,662,'機器問題說明',10,'#183b56',700),text(412,662,'配件問題說明',10,'#183b56',700));
-wrapLines(val('machineNotes'),31,3).forEach((line,i)=>a.push(text(52,681+i*13,line,10.5)));wrapLines(val('accessoryNotes'),31,3).forEach((line,i)=>a.push(text(412,681+i*13,line,10.5)));
+issueList.forEach((label,i)=>{let y=501+i*17,x=54,checked=document.getElementById(`issue${i}`).checked;a.push(mark(x,y,checked,13),text(x+20,y,label,11.5,'#20303b'))});
+accessoryList.forEach(([label,unit],i)=>{let col=i<7?0:1,row=i%7,x=410+col*170,y=501+row*18,checked=document.getElementById(`accCheck${i}`).checked,value=val(`acc${i}`);a.push(mark(x,y,checked,13),text(x+18,y,label,11.5));a.push(ln(x+88,y+2,x+112,y+2));if(value)a.push(text(x+89,y,value,11.5));if(unit)a.push(text(x+116,y,unit,11.5))});
+a.push(box(42,644,350,68,'#cfd9df','white',3),box(402,644,350,68,'#cfd9df','white',3),text(52,662,'機器問題說明',11,'#183b56',700),text(412,662,'配件問題說明',11,'#183b56',700));
+wrapLines(val('machineNotes'),28,3).forEach((line,i)=>a.push(text(52,681+i*13,line,11.5)));wrapLines(val('accessoryNotes'),28,3).forEach((line,i)=>a.push(text(412,681+i*13,line,11.5)));
 a.push(section(720,'04｜安裝測試結果'));
-results.forEach(([label,opts],i)=>{let y=766+i*22;a.push(text(46,y,label,11,'#20303b',600),ln(42,y+10,752,y+10));opts.forEach((option,j)=>{let x=235+j*174,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===option;a.push(mark(x,y,checked,12),text(x+20,y,option,10.5,'#20303b'))})});
+results.forEach(([label,opts],i)=>{let y=766+i*22;a.push(text(46,y,label,12,'#20303b',600),ln(42,y+10,752,y+10));opts.forEach((option,j)=>{let x=235+j*174,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===option;a.push(mark(x,y,checked,13),text(x+20,y,option,11.5,'#20303b'))})});
 a.push(section(858,'05｜簽名確認'));
-a.push(text(46,904,'工程師簽名'+(val('engineerName')?'：'+val('engineerName'):''),10.5,'#183b56',700),text(408,904,'客戶簽名'+(val('customerName')?'：'+val('customerName'):''),10.5,'#183b56',700));
+a.push(text(46,904,'工程師簽名'+(val('engineerName')?'：'+val('engineerName'):''),11.5,'#183b56',700),text(408,904,'客戶簽名'+(val('customerName')?'：'+val('customerName'):''),11.5,'#183b56',700));
 a.push(box(42,914,350,58,'#cfd9df','white',3),box(402,914,350,58,'#cfd9df','white',3),signPath('engineer',52,922,330,40),signPath('customer',412,922,330,40));
-a.push(text(52,987,'日期：'+(val('date')||'____ / ____ / ____'),9.5,'#607482'),text(412,987,'日期：'+(val('date')||'____ / ____ / ____'),9.5,'#607482'));
-a.push(section(1000,'備註'),box(42,1032,710,64,'#cfd9df','white',3));wrapLines(val('notes'),60,3).forEach((line,i)=>a.push(text(52,1055+i*13,line,10.5)));
+a.push(text(52,987,'日期：'+(val('date')||'____ / ____ / ____'),10.5,'#607482'),text(412,987,'日期：'+(val('date')||'____ / ____ / ____'),10.5,'#607482'));
+a.push(section(1000,'備註'),box(42,1032,710,64,'#cfd9df','white',3));wrapLines(val('notes'),54,3).forEach((line,i)=>a.push(text(52,1055+i*13,line,11.5)));
 a.push('</svg>');document.getElementById('paper').innerHTML=a.join('')}
 function refresh(){render()}
 document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',refresh));document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el=>el.addEventListener('change',refresh));
 function notify(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
-function renderFormCanvases(){const svgs=[...document.querySelectorAll('#paper svg')];return Promise.all(svgs.map(svg=>new Promise((resolve,reject)=>{const xml=new XMLSerializer().serializeToString(svg),blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=1588;cv.height=2246;const ctx=cv.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(url);resolve(cv)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('render failed'))};img.src=url}))) }
+function renderFormCanvases(){const svgs=[...document.querySelectorAll('#paper svg')];return Promise.all(svgs.map(svg=>new Promise((resolve,reject)=>{const xml=new XMLSerializer().serializeToString(svg),blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=2480;cv.height=3508;const ctx=cv.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(url);resolve(cv)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('render failed'))};img.src=url}))) }
 function combinePages(pages){const cv=document.createElement('canvas');cv.width=pages[0].width;cv.height=pages[0].height*pages.length;const ctx=cv.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);pages.forEach((page,i)=>ctx.drawImage(page,0,i*page.height));return cv}
 function canvasBlob(canvas,type,quality){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('export failed')),type,quality))}
 function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
@@ -130,6 +130,8 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
+
 
 
 
