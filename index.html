@@ -27,7 +27,7 @@ main{max-width:980px;margin:18px auto;padding:0 14px 34px;display:grid;grid-temp
 <label class="field wide">公司名稱<input id="company" type="text" autocomplete="organization"></label>
 <label class="field">聯絡電話<input id="phone" type="tel" autocomplete="tel"></label><label class="field">傳真<input id="fax" type="tel"></label>
 <label class="field wide">地址<input id="address" type="text" autocomplete="street-address"></label>
-<label class="field">現場聯絡人<input id="contact" type="text" autocomplete="name"></label><label class="field">電話分機<input id="extension" type="text"></label>
+<label class="field">現場聯絡人<input id="contact" type="text" autocomplete="name"></label>
 <label class="field">機種品牌<input id="brand" type="text"></label><label class="field">機器型號<input id="model" type="text"></label>
 <label class="field wide">機器序號<input id="serial" type="text"></label>
 <label class="field">油墨型號<input id="inkType" type="text"></label><label class="field">稀釋液型號<input id="thinnerType" type="text"></label><label class="field wide">清潔液型號<input id="cleanerType" type="text"></label>
@@ -59,7 +59,7 @@ const issueList=['機器一切正常穩定','機器外觀良好','開機墨線�
 const accessoryList=[['墨水','瓶'],['稀釋液','瓶'],['清潔液','瓶'],['置機平台','台'],['落地架','組'],['噴頭夾具','組'],['清潔用具','組'],['操作手冊','本'],['三點組合','組'],['空壓機','台'],['同步器','組'],['橫移機器','台'],['輸送帶','台'],['其它','']];
 const results=[['機器安裝測試後',['機器運轉正常','機器運轉不正常','機器需要調整']],['噴印功能',['完成達到','無法達到','修改增加']],['噴印品質',['噴印良好','效果不佳','調整改善']],['教育訓練',['初步完成','尚未完成','擇期安排']]];
 const safe=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const inputIds=['company','phone','fax','address','contact','extension','brand','model','serial','inkType','thinnerType','cleanerType','date','resolution','productionSpeed','conveyorSpeed','machineNotes','accessoryNotes','engineerName','customerName','notes'];
+const inputIds=['company','phone','fax','address','contact','brand','model','serial','inkType','thinnerType','cleanerType','date','resolution','productionSpeed','conveyorSpeed','machineNotes','accessoryNotes','engineerName','customerName','notes'];
 const issuesEl=document.getElementById('issues'); issueList.forEach((s,i)=>issuesEl.insertAdjacentHTML('beforeend',`<label class="option"><input type="checkbox" id="issue${i}"><span>${s}</span></label>`));
 const accEl=document.getElementById('accessories'); accessoryList.forEach(([s,u],i)=>accEl.insertAdjacentHTML('beforeend',`<label class="qty"><input id="accCheck${i}" type="checkbox" aria-label="勾選${s}"><span>${s}${u?'（'+u+'）':''}</span><input id="acc${i}" type="number" min="0" inputmode="numeric" placeholder="數量" aria-label="${s}數量"></label>`));
 const resEl=document.getElementById('results'); results.forEach(([label,opts],i)=>{let html=`<div style="margin:8px 0"><div style="font-size:12px;color:var(--muted);font-weight:650;margin-bottom:6px">${label}</div><div class="optiongrid three">`;opts.forEach((o,j)=>html+=`<label class="option"><input type="radio" name="result${i}" value="${safe(o)}"><span>${o}</span></label>`);html+='</div></div>';resEl.insertAdjacentHTML('beforeend',html)});
@@ -95,7 +95,7 @@ function render(){let a=[];reportHeader(a,false,1);
 a.push(section(120,'01｜客戶與設備資料'));
 a.push(field(42,162,400,'公司名稱',val('company')),field(456,162,170,'聯絡電話',val('phone')),field(640,162,112,'傳真',val('fax')));
 a.push(field(42,198,710,'地址',val('address')));
-a.push(field(42,234,220,'現場聯絡人',val('contact')),field(274,234,128,'電話分機',val('extension')),field(416,234,150,'機種品牌',val('brand')),field(580,234,172,'機器型號',val('model')));
+a.push(field(42,234,220,'現場聯絡人',val('contact')),field(274,234,220,'機種品牌',val('brand')),field(506,234,246,'機器型號',val('model')));
 a.push(field(42,270,710,'機器序號',val('serial')));
 a.push(field(42,306,220,'油墨型號',val('inkType')),field(274,306,220,'稀釋液型號',val('thinnerType')),field(506,306,246,'清潔液型號',val('cleanerType')));
 a.push(section(350,'02｜現場狀況與安裝設定'));
@@ -130,6 +130,7 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
 
 
 
