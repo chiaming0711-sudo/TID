@@ -88,7 +88,7 @@ function ln(x1,y1,x2,y2,stroke='#d9e1e7',width=1){return `<path d="M${x1} ${y1}H
 function box(x,y,w,h,stroke='#d9e1e7',fill='none',r=2){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" stroke="${stroke}"/>`}
 function section(y,title){return `${box(42,y,710,26,'#e5ebef','#f2f5f7',3)}<rect x="42" y="${y}" width="5" height="26" rx="2" fill="#183b56"/>${text(56,y+18,title,19,'#183b56',700)}`}
 function field(x,y,w,label,value){return text(x,y,label,16.5,'#607482',600)+(value?text(x+6,y+18,value,17.5,'#20303b'):'')+ln(x,y+23,x+w,y+23,'#b9c7d1',1)}
-function lineField(x,y,w,label,value){return `${text(x,y,label,16.5,'#607482',600)}${value?text(x,y+16,value,17.5,'#20303b'):''}${ln(x,y+23,x+w,y+23,'#b9c7d1',1)}`}
+function lineField(x,y,w,label,value){return text(x,y,label,16.5,'#607482',600)+(value?text(x,y+29,value,17.5,'#20303b'):'')+ln(x,y+36,x+w,y+36,'#b9c7d1',1)}
 function mark(x,y,checked,size=14){let out=box(x,y-size+2,size,size,checked?'#183b56':'#607482',checked?'#183b56':'white',2);if(checked)out+=`<path d="M${x+3} ${y-size/2+2}l3 3 6-7" stroke="white" stroke-width="1.8" fill="none"/>`;return out}
 function signPath(name,x,y,w,h){
 const strokes=paths[name],size=signatureCaptureSize[name],points=strokes.flat().map(p=>({x:p.x/1400*size.width,y:p.y/700*size.height}));if(!points.length)return'';
@@ -103,24 +103,24 @@ function reportHeader(a,continued,page){a.push(`<svg class="report-page" xmlns="
 function render(){let a=[];reportHeader(a,false,1);
 a.push(section(120,'01｜客戶與設備資料'));
 a.push(lineField(42,186,400,'公司名稱',val('company')),lineField(456,186,170,'聯絡電話',val('phone')),lineField(640,186,112,'傳真',val('fax')));
-a.push(lineField(42,224,475,'地址',val('address')),lineField(532,224,220,'現場聯絡人',val('contact')));
-a.push(lineField(42,262,220,'機種品牌',val('brand')),lineField(274,262,220,'機器型號',val('model')),lineField(506,262,246,'機器序號',val('serial')));
-a.push(lineField(42,300,220,'油墨型號',val('inkType')),lineField(274,300,220,'稀釋液型號',val('thinnerType')),lineField(506,300,246,'清潔液型號',val('cleanerType')));
-a.push(section(336,'02｜現場狀況與安裝設定'));
-a.push(lineField(42,402,210,'同步器解析度',val('resolution')),lineField(274,402,210,'每分鐘數量',val('productionSpeed')),lineField(506,402,246,'每分鐘米數',val('conveyorSpeed')));
-a.push(section(438,'03｜檢查項目與配件'));
-a.push(text(54,486,'機器檢查（可複選）',14.5,'#183b56',700),text(410,486,'配件確認（勾選並填數量）',14.5,'#183b56',700),`<path d="M397 474V646" stroke="#d9e1e7"/>`);
-issueList.forEach((label,i)=>{let y=504+i*20,x=54,checked=document.getElementById(`issue${i}`).checked;a.push(mark(x,y,checked,16),text(x+23,y,label,15.5,'#20303b'))});
-accessoryList.forEach(([label,unit],i)=>{let col=i<7?0:1,row=i%7,x=410+col*170,y=504+row*20,checked=document.getElementById(`accCheck${i}`).checked,value=val(`acc${i}`);a.push(mark(x,y,checked,16),text(x+18,y,label,15.5));a.push(ln(x+91,y+2,x+114,y+2));if(value)a.push(text(x+92,y,value,15.5));if(unit)a.push(text(x+118,y,unit,15.5))});
-a.push(box(42,662,350,64,'#cfd9df','white',3),box(402,662,350,64,'#cfd9df','white',3),text(52,682,'機器問題說明',15,'#183b56',700),text(412,682,'配件問題說明',15,'#183b56',700));
-wrapLines(val('machineNotes'),20,2).forEach((line,i)=>a.push(text(52,700+i*17,line,15.5)));wrapLines(val('accessoryNotes'),20,2).forEach((line,i)=>a.push(text(412,700+i*17,line,15.5)));
-a.push(section(738,'04｜安裝測試結果'));
-results.forEach(([label,opts],i)=>{let y=786+i*21;a.push(text(46,y,label,16,'#20303b',600),ln(42,y+5,752,y+5));opts.forEach((option,j)=>{let x=235+j*174,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===option;a.push(mark(x,y,checked,16),text(x+23,y,option,15.5,'#20303b'))})});
-a.push(section(870,'05｜簽名確認'));
-a.push(text(46,918,'工程師簽名',13.5,'#183b56',700),text(408,918,'客戶簽名',13.5,'#183b56',700));
-a.push(box(42,927,350,80,'#cfd9df','white',3),box(402,927,350,80,'#cfd9df','white',3),signPath('engineer',52,933,330,68),signPath('customer',412,933,330,68));
+a.push(lineField(42,238,475,'地址',val('address')),lineField(532,238,220,'現場聯絡人',val('contact')));
+a.push(lineField(42,290,220,'機種品牌',val('brand')),lineField(274,290,220,'機器型號',val('model')),lineField(506,290,246,'機器序號',val('serial')));
+a.push(lineField(42,342,220,'油墨型號',val('inkType')),lineField(274,342,220,'稀釋液型號',val('thinnerType')),lineField(506,342,246,'清潔液型號',val('cleanerType')));
+a.push(section(386,'02｜現場狀況與安裝設定'));
+a.push(lineField(42,452,210,'同步器解析度',val('resolution')),lineField(274,452,210,'每分鐘數量',val('productionSpeed')),lineField(506,452,246,'每分鐘米數',val('conveyorSpeed')));
+a.push(section(494,'03｜檢查項目與配件'));
+a.push(text(54,542,'機器檢查（可複選）',14.5,'#183b56',700),text(410,542,'配件確認（勾選並填數量）',14.5,'#183b56',700),`<path d="M397 530V684" stroke="#d9e1e7"/>`);
+issueList.forEach((label,i)=>{let y=560+i*18,x=54,checked=document.getElementById(`issue${i}`).checked;a.push(mark(x,y,checked,16),text(x+23,y,label,15.5,'#20303b'))});
+accessoryList.forEach(([label,unit],i)=>{let col=i<7?0:1,row=i%7,x=410+col*170,y=560+row*18,checked=document.getElementById(`accCheck${i}`).checked,value=val(`acc${i}`);a.push(mark(x,y,checked,16),text(x+18,y,label,15.5));a.push(ln(x+91,y+2,x+114,y+2));if(value)a.push(text(x+92,y,value,15.5));if(unit)a.push(text(x+118,y,unit,15.5))});
+a.push(box(42,686,350,64,'#cfd9df','white',3),box(402,686,350,64,'#cfd9df','white',3),text(52,706,'機器問題說明',15,'#183b56',700),text(412,706,'配件問題說明',15,'#183b56',700));
+wrapLines(val('machineNotes'),20,2).forEach((line,i)=>a.push(text(52,724+i*17,line,15.5)));wrapLines(val('accessoryNotes'),20,2).forEach((line,i)=>a.push(text(412,724+i*17,line,15.5)));
+a.push(section(762,'04｜安裝測試結果'));
+results.forEach(([label,opts],i)=>{let y=810+i*20;a.push(text(46,y,label,16,'#20303b',600),ln(42,y+5,752,y+5));opts.forEach((option,j)=>{let x=235+j*174,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===option;a.push(mark(x,y,checked,16),text(x+23,y,option,15.5,'#20303b'))})});
+a.push(section(886,'05｜簽名確認'));
+a.push(text(46,934,'工程師簽名',13.5,'#183b56',700),text(408,934,'客戶簽名',13.5,'#183b56',700));
+a.push(box(42,943,350,80,'#cfd9df','white',3),box(402,943,350,80,'#cfd9df','white',3),signPath('engineer',52,949,330,68),signPath('customer',412,949,330,68));
 
-a.push(section(1013,'備註'));wrapLines(val('notes'),44,2).forEach((line,i)=>a.push(text(52,1069+i*17,line,15.5)));
+a.push(section(1029,'備註'));wrapLines(val('notes'),44,2).forEach((line,i)=>a.push(text(52,1075+i*17,line,15.5)));
 a.push('</svg>');document.getElementById('paper').innerHTML=a.join('')}
 function refresh(){render()}
 document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',refresh));document.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el=>el.addEventListener('change',refresh));
@@ -140,6 +140,7 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
 
 
 
