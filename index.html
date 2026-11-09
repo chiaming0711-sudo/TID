@@ -102,12 +102,12 @@ function wrapLines(s,max=58,maxLines=8){let out=[];while(s.length>max){out.push(
 function reportHeader(a,continued,page){a.push(`<svg class="report-page" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" role="img" aria-label="安裝報告書第${page}頁"><rect width="794" height="1123" fill="white"/>`);a.push(text(42,32,'TID  /  啟益科技',14,'#607482',700),text(42,65,'安裝報告書',29,'#183b56',700));if(continued)a.push(text(190,64,'（續）',16,'#607482',500));a.push(field(620,58,132,'日期',val('date')),ln(42,103,752,103,'#183b56',1.5))}
 function render(){let a=[];reportHeader(a,false,1);
 a.push(section(120,'01｜客戶與設備資料'));
-a.push(lineField(42,168,400,'公司名稱',val('company')),lineField(456,168,170,'聯絡電話',val('phone')),lineField(640,168,112,'傳真',val('fax')));
-a.push(lineField(42,206,475,'地址',val('address')),lineField(532,206,220,'現場聯絡人',val('contact')));
-a.push(lineField(42,244,220,'機種品牌',val('brand')),lineField(274,244,220,'機器型號',val('model')),lineField(506,244,246,'機器序號',val('serial')));
-a.push(lineField(42,282,220,'油墨型號',val('inkType')),lineField(274,282,220,'稀釋液型號',val('thinnerType')),lineField(506,282,246,'清潔液型號',val('cleanerType')));
+a.push(lineField(42,176,400,'公司名稱',val('company')),lineField(456,176,170,'聯絡電話',val('phone')),lineField(640,176,112,'傳真',val('fax')));
+a.push(lineField(42,214,475,'地址',val('address')),lineField(532,214,220,'現場聯絡人',val('contact')));
+a.push(lineField(42,252,220,'機種品牌',val('brand')),lineField(274,252,220,'機器型號',val('model')),lineField(506,252,246,'機器序號',val('serial')));
+a.push(lineField(42,290,220,'油墨型號',val('inkType')),lineField(274,290,220,'稀釋液型號',val('thinnerType')),lineField(506,290,246,'清潔液型號',val('cleanerType')));
 a.push(section(326,'02｜現場狀況與安裝設定'));
-a.push(lineField(42,374,210,'同步器解析度',val('resolution')),lineField(274,374,210,'生產速度',val('productionSpeed')),lineField(506,374,246,'輸送速度',val('conveyorSpeed')));
+a.push(lineField(42,382,210,'同步器解析度',val('resolution')),lineField(274,382,210,'生產速度',val('productionSpeed')),lineField(506,382,246,'輸送速度',val('conveyorSpeed')));
 a.push(section(418,'03｜檢查項目與配件'));
 a.push(text(54,466,'機器檢查（可複選）',14.5,'#183b56',700),text(410,466,'配件確認（勾選並填數量）',14.5,'#183b56',700),`<path d="M397 454V626" stroke="#d9e1e7"/>`);
 issueList.forEach((label,i)=>{let y=484+i*20,x=54,checked=document.getElementById(`issue${i}`).checked;a.push(mark(x,y,checked,16),text(x+23,y,label,15.5,'#20303b'))});
