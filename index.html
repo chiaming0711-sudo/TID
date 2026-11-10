@@ -63,7 +63,7 @@ const inputIds=['company','phone','fax','address','contact','brand','model','ser
 const issuesEl=document.getElementById('issues'); issueList.forEach((s,i)=>issuesEl.insertAdjacentHTML('beforeend',`<label class="option"><input type="checkbox" id="issue${i}"><span>${s}</span></label>`));
 const accEl=document.getElementById('accessories'); accessoryList.forEach(([s,u],i)=>accEl.insertAdjacentHTML('beforeend',`<label class="qty"><input id="accCheck${i}" type="checkbox" aria-label="勾選${s}"><span>${s}${u?'（'+u+'）':''}</span><input id="acc${i}" type="number" min="0" inputmode="numeric" placeholder="數量" aria-label="${s}數量"></label>`));
 const resEl=document.getElementById('results'); results.forEach(([label,opts],i)=>{let html=`<div style="margin:8px 0"><div style="font-size:12px;color:var(--muted);font-weight:650;margin-bottom:6px">${label}</div><div class="optiongrid three">`;opts.forEach((o,j)=>html+=`<label class="option"><input type="radio" name="result${i}" value="${safe(o)}"><span>${o}</span></label>`);html+='</div></div>';resEl.insertAdjacentHTML('beforeend',html)});
-const paths={engineer:[],customer:[]};
+const paths={engineer:[],customer:[]};const signatureWasPortrait={engineer:false,customer:false};const signatureCaptureSize={engineer:{width:1,height:1},customer:{width:1,height:1}};let signatureBackupPortrait=false,signatureBackupSize=null;
 const signatureNames={engineer:'工程師簽名',customer:'客戶簽名'};
 const signatureModal=document.getElementById('signatureModal');
 const fullSignatureCanvas=document.getElementById('fullSignatureCanvas');
@@ -72,14 +72,14 @@ let activeSignature=null, signatureBackup=[], drawingSignature=false, lockedScro
 function copyStrokes(strokes){return strokes.map(st=>st.map(p=>({x:p.x,y:p.y})))}
 function drawStrokes(ctx,strokes,width,height,lineWidth=4){ctx.clearRect(0,0,width,height);ctx.strokeStyle='#153b55';ctx.lineWidth=lineWidth;ctx.lineCap='round';ctx.lineJoin='round';for(const stroke of strokes){if(!stroke.length)continue;ctx.beginPath();ctx.moveTo(stroke[0].x/1400*width,stroke[0].y/700*height);for(let i=1;i<stroke.length;i++)ctx.lineTo(stroke[i].x/1400*width,stroke[i].y/700*height);ctx.stroke()}}
 function paintSignaturePreview(name){const cv=document.getElementById(`sig-${name}`);drawStrokes(cv.getContext('2d'),paths[name],cv.width,cv.height,3)}
-function openSignature(name){activeSignature=name;signatureBackup=copyStrokes(paths[name]);document.getElementById('signatureTitle').textContent=signatureNames[name];drawStrokes(fullSignatureContext,paths[name],fullSignatureCanvas.width,fullSignatureCanvas.height,5);lockedScrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top='-'+lockedScrollY+'px';document.body.style.left='0';document.body.style.right='0';signatureModal.hidden=false}
-function closeSignature(keep){if(activeSignature===null)return;if(!keep){paths[activeSignature]=signatureBackup}paintSignaturePreview(activeSignature);signatureModal.hidden=true;document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';requestAnimationFrame(()=>window.scrollTo(0,lockedScrollY));activeSignature=null;signatureBackup=[];refresh()}
+function openSignature(name){activeSignature=name;signatureBackup=copyStrokes(paths[name]);signatureBackupPortrait=signatureWasPortrait[name];signatureBackupSize={...signatureCaptureSize[name]};document.getElementById('signatureTitle').textContent=signatureNames[name];drawStrokes(fullSignatureContext,paths[name],fullSignatureCanvas.width,fullSignatureCanvas.height,5);lockedScrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top='-'+lockedScrollY+'px';document.body.style.left='0';document.body.style.right='0';signatureModal.hidden=false}
+function closeSignature(keep){if(activeSignature===null)return;if(!keep){paths[activeSignature]=signatureBackup;signatureWasPortrait[activeSignature]=signatureBackupPortrait;signatureCaptureSize[activeSignature]=signatureBackupSize}paintSignaturePreview(activeSignature);signatureModal.hidden=true;document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';requestAnimationFrame(()=>window.scrollTo(0,lockedScrollY));activeSignature=null;signatureBackup=[];refresh()}
 signatureModal.addEventListener("touchmove",e=>{if(activeSignature!==null)e.preventDefault()},{passive:false});for(const name of Object.keys(paths)){const cv=document.getElementById(`sig-${name}`);cv.addEventListener('click',()=>openSignature(name));document.querySelector(`[data-open-signature="${name}"]`).addEventListener('click',()=>openSignature(name))}
 function signaturePoint(e){const r=fullSignatureCanvas.getBoundingClientRect();return{x:(e.clientX-r.left)*fullSignatureCanvas.width/r.width,y:(e.clientY-r.top)*fullSignatureCanvas.height/r.height}}
-fullSignatureCanvas.addEventListener('pointerdown',e=>{if(activeSignature===null)return;drawingSignature=true;fullSignatureCanvas.setPointerCapture(e.pointerId);const p=signaturePoint(e);paths[activeSignature].push([p]);fullSignatureContext.beginPath();fullSignatureContext.moveTo(p.x,p.y);e.preventDefault()});
+fullSignatureCanvas.addEventListener('pointerdown',e=>{if(activeSignature===null)return;drawingSignature=true;if(paths[activeSignature].length===0){signatureWasPortrait[activeSignature]=window.innerHeight>window.innerWidth;const r=fullSignatureCanvas.getBoundingClientRect();signatureCaptureSize[activeSignature]={width:r.width,height:r.height}}fullSignatureCanvas.setPointerCapture(e.pointerId);const p=signaturePoint(e);paths[activeSignature].push([p]);fullSignatureContext.beginPath();fullSignatureContext.moveTo(p.x,p.y);e.preventDefault()});
 fullSignatureCanvas.addEventListener('pointermove',e=>{if(!drawingSignature||activeSignature===null)return;const p=signaturePoint(e);paths[activeSignature][paths[activeSignature].length-1].push(p);fullSignatureContext.lineTo(p.x,p.y);fullSignatureContext.stroke();e.preventDefault()});
 const stopDrawing=()=>{drawingSignature=false};fullSignatureCanvas.addEventListener('pointerup',stopDrawing);fullSignatureCanvas.addEventListener('pointercancel',stopDrawing);
-document.getElementById('clearSignature').addEventListener('click',()=>{if(activeSignature===null)return;paths[activeSignature]=[];drawStrokes(fullSignatureContext,[],fullSignatureCanvas.width,fullSignatureCanvas.height,5)});
+document.getElementById('clearSignature').addEventListener('click',()=>{if(activeSignature===null)return;paths[activeSignature]=[];signatureWasPortrait[activeSignature]=window.innerHeight>window.innerWidth;const r=fullSignatureCanvas.getBoundingClientRect();signatureCaptureSize[activeSignature]={width:r.width,height:r.height};drawStrokes(fullSignatureContext,[],fullSignatureCanvas.width,fullSignatureCanvas.height,5)});
 document.getElementById('cancelSignature').addEventListener('click',()=>closeSignature(false));document.getElementById('confirmSignature').addEventListener('click',()=>closeSignature(true));
 document.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',()=>{const n=b.dataset.clear;paths[n]=[];paintSignaturePreview(n);refresh()}));
 function val(id){return document.getElementById(id).value.trim()}
@@ -91,10 +91,12 @@ function field(x,y,w,label,value){return text(x,y,label,16.5,'#607482',600)+(val
 function lineField(x,y,w,label,value){return text(x,y,label,16.5,'#607482',600)+(value?text(x,y+29,value,17.5,'#20303b'):'')+ln(x,y+36,x+w,y+36,'#b9c7d1',1)}
 function mark(x,y,checked,size=14){let out=box(x,y-size+2,size,size,checked?'#183b56':'#607482',checked?'#183b56':'white',2);if(checked)out+=`<path d="M${x+3} ${y-size/2+2}l3 3 6-7" stroke="white" stroke-width="1.8" fill="none"/>`;return out}
 function signPath(name,x,y,w,h){
-const source=document.getElementById(`sig-${name}`),ctx=source.getContext('2d'),pixels=ctx.getImageData(0,0,source.width,source.height),data=pixels.data;let minX=source.width,minY=source.height,maxX=-1,maxY=-1;
-for(let py=0;py<source.height;py++)for(let px=0;px<source.width;px++)if(data[(py*source.width+px)*4+3]>0){if(px<minX)minX=px;if(px>maxX)maxX=px;if(py<minY)minY=py;if(py>maxY)maxY=py}
-if(maxX<minX||maxY<minY)return'';const crop=document.createElement('canvas');crop.width=maxX-minX+1;crop.height=maxY-minY+1;crop.getContext('2d').drawImage(source,minX,minY,crop.width,crop.height,0,0,crop.width,crop.height);const href=crop.toDataURL('image/png');
-return `<image x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet" href="${href}"/>`
+const strokes=paths[name],size=signatureCaptureSize[name],points=strokes.flat().map(p=>({x:p.x/1400*size.width,y:p.y/700*size.height}));if(!points.length)return'';
+let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;for(const p of points){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)}
+const width=maxX-minX||1,height=maxY-minY||1,rotate=signatureWasPortrait[name];
+const transformed=strokes.map(st=>st.map(p=>{const px=p.x/1400*size.width,py=p.y/700*size.height;return rotate?{x:py-minY,y:maxX-px}:{x:px-minX,y:py-minY}}));
+const fitWidth=rotate?height:width,fitHeight=rotate?width:height,scale=Math.min(w/fitWidth,h/fitHeight)*0.9,offsetX=x+(w-fitWidth*scale)/2,offsetY=y+(h-fitHeight*scale)/2;
+return transformed.map(st=>{if(!st.length)return'';let d='M'+(offsetX+st[0].x*scale)+' '+(offsetY+st[0].y*scale);for(let i=1;i<st.length;i++)d+=' L'+(offsetX+st[i].x*scale)+' '+(offsetY+st[i].y*scale);return '<path d="'+d+'" fill="none" stroke="#153b55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'}).join('')
 }
 function wrapLines(s,max=58,maxLines=8){let out=[];while(s.length>max){out.push(s.slice(0,max));s=s.slice(max)}if(s)out.push(s);return out.slice(0,maxLines)}
 function reportHeader(a,continued,page){a.push(`<svg class="report-page" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" role="img" aria-label="安裝報告書第${page}頁"><rect width="794" height="1123" fill="white"/>`);a.push(text(42,32,'TID  /  啟益科技',14,'#607482',700),text(42,65,'安裝報告書',29,'#183b56',700));if(continued)a.push(text(190,64,'（續）',16,'#607482',500));a.push(field(620,58,132,'日期',val('date')),ln(42,103,752,103,'#183b56',1.5))}
@@ -138,8 +140,6 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
-
-
 
 
 
