@@ -91,10 +91,10 @@ function field(x,y,w,label,value){return text(x,y,label,16.5,'#607482',600)+(val
 function lineField(x,y,w,label,value){return text(x,y,label,16.5,'#607482',600)+(value?text(x,y+29,value,17.5,'#20303b'):'')+ln(x,y+36,x+w,y+36,'#b9c7d1',1)}
 function mark(x,y,checked,size=14){let out=box(x,y-size+2,size,size,checked?'#183b56':'#607482',checked?'#183b56':'white',2);if(checked)out+=`<path d="M${x+3} ${y-size/2+2}l3 3 6-7" stroke="white" stroke-width="1.8" fill="none"/>`;return out}
 function signPath(name,x,y,w,h){
-const strokes=paths[name],points=strokes.flat();if(!points.length)return'';
-let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;for(const p of points){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)}
-const width=maxX-minX||1,height=maxY-minY||1,scale=Math.min(w/width,h/height)*0.9,offsetX=x+(w-width*scale)/2,offsetY=y+(h-height*scale)/2;
-return strokes.map(st=>{if(!st.length)return'';let d='M'+(offsetX+(st[0].x-minX)*scale)+' '+(offsetY+(st[0].y-minY)*scale);for(let i=1;i<st.length;i++)d+=' L'+(offsetX+(st[i].x-minX)*scale)+' '+(offsetY+(st[i].y-minY)*scale);return '<path d="'+d+'" fill="none" stroke="#153b55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'}).join('')
+const source=document.getElementById(`sig-${name}`),ctx=source.getContext('2d'),pixels=ctx.getImageData(0,0,source.width,source.height),data=pixels.data;let minX=source.width,minY=source.height,maxX=-1,maxY=-1;
+for(let py=0;py<source.height;py++)for(let px=0;px<source.width;px++)if(data[(py*source.width+px)*4+3]>0){if(px<minX)minX=px;if(px>maxX)maxX=px;if(py<minY)minY=py;if(py>maxY)maxY=py}
+if(maxX<minX||maxY<minY)return'';const crop=document.createElement('canvas');crop.width=maxX-minX+1;crop.height=maxY-minY+1;crop.getContext('2d').drawImage(source,minX,minY,crop.width,crop.height,0,0,crop.width,crop.height);const href=crop.toDataURL('image/png');
+return `<image x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet" href="${href}"/>`
 }
 function wrapLines(s,max=58,maxLines=8){let out=[];while(s.length>max){out.push(s.slice(0,max));s=s.slice(max)}if(s)out.push(s);return out.slice(0,maxLines)}
 function reportHeader(a,continued,page){a.push(`<svg class="report-page" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" role="img" aria-label="安裝報告書第${page}頁"><rect width="794" height="1123" fill="white"/>`);a.push(text(42,32,'TID  /  啟益科技',14,'#607482',700),text(42,65,'安裝報告書',29,'#183b56',700));if(continued)a.push(text(190,64,'（續）',16,'#607482',500));a.push(field(620,58,132,'日期',val('date')),ln(42,103,752,103,'#183b56',1.5))}
@@ -138,6 +138,7 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
 
 
 
