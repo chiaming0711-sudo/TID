@@ -102,8 +102,8 @@ function wrapLines(s,max=58,maxLines=8){let out=[];while(s.length>max){out.push(
 function reportHeader(a,continued,page){a.push(`<svg class="report-page" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" role="img" aria-label="安裝報告書第${page}頁"><rect width="794" height="1123" fill="white"/>`);a.push(text(42,32,'TID  /  啟益科技',14,'#607482',700),text(42,65,'安裝報告書',29,'#183b56',700));if(continued)a.push(text(190,64,'（續）',16,'#607482',500));a.push(field(620,58,132,'日期',val('date')),ln(42,103,752,103,'#183b56',1.5))}
 function render(){let a=[];reportHeader(a,false,1);
 a.push(section(120,'01｜客戶與設備資料'));
-a.push(lineField(42,186,400,'公司名稱',val('company')),lineField(456,186,170,'聯絡電話',val('phone')),lineField(640,186,112,'傳真',val('fax')));
-a.push(lineField(42,238,475,'地址',val('address')),lineField(532,238,220,'現場聯絡人',val('contact')));
+a.push(lineField(42,186,220,'公司名稱',val('company')),lineField(274,186,220,'聯絡電話',val('phone')),lineField(506,186,246,'傳真',val('fax')));
+a.push(lineField(42,238,452,'地址',val('address')),lineField(506,238,246,'現場聯絡人',val('contact')));
 a.push(lineField(42,290,220,'機種品牌',val('brand')),lineField(274,290,220,'機器型號',val('model')),lineField(506,290,246,'機器序號',val('serial')));
 a.push(lineField(42,342,220,'油墨型號',val('inkType')),lineField(274,342,220,'稀釋液型號',val('thinnerType')),lineField(506,342,246,'清潔液型號',val('cleanerType')));
 a.push(section(386,'02｜現場狀況與安裝設定'));
@@ -140,6 +140,10 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 const today=new Date();document.getElementById('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');render();
 })();
 </script></body></html>
+
+
+
+
 
 
 
