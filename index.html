@@ -122,8 +122,8 @@ wrapLines(val('machineNotes'),20,2).forEach((line,i)=>a.push(text(52,724+i*17,li
 a.push(section(762,'04｜安裝測試結果'));
 results.forEach(([label,opts],i)=>{let y=810+i*20;a.push(text(46,y,label,16,'#20303b',600),ln(42,y+5,752,y+5));opts.forEach((option,j)=>{let x=235+j*174,checked=document.querySelector(`input[name="result${i}"]:checked`)?.value===option;a.push(mark(x,y,checked,16),text(x+23,y,option,15.5,'#20303b'))})});
 a.push(section(886,'05｜簽名確認'));
-a.push(text(42,934,'工程師姓名',16.5,'#607482',600),text(42,963,val('engineerNames'),21,'#20303b'),ln(42,970,282,970,'#b9c7d1',1),text(292,934,'客戶簽名',13.5,'#183b56',700));
-a.push(box(292,943,280,80,'#cfd9df','white',3),signPath('customer',300,949,264,68),text(582,934,'簽名日期',13.5,'#607482',600),text(582,963,customerSignatureDate,14.5,'#20303b'),ln(582,970,752,970,'#b9c7d1',1),text(582,984,'行動電話',13.5,'#607482',600),text(582,1013,val('customerMobile'),14.5,'#20303b'),ln(582,1020,752,1020,'#b9c7d1',1));
+a.push(text(42,934,'工程師姓名',16.5,'#607482',600),text(42,963,val('engineerNames'),23,'#20303b'),ln(42,970,302,970,'#b9c7d1',1),text(312,934,'客戶簽名',13.5,'#183b56',700));
+a.push(box(312,943,280,80,'#cfd9df','white',3),signPath('customer',320,949,264,68),text(602,934,'簽名日期',13.5,'#607482',600),text(602,963,customerSignatureDate,14.5,'#20303b'),ln(602,970,752,970,'#b9c7d1',1),text(602,984,'行動電話',13.5,'#607482',600),text(602,1013,val('customerMobile'),14.5,'#20303b'),ln(602,1020,752,1020,'#b9c7d1',1));
 
 a.push(section(1029,'備註'));wrapLines(val('notes'),44,2).forEach((line,i)=>a.push(text(52,1075+i*17,line,15.5)));
 a.push('</svg>');document.getElementById('paper').innerHTML=a.join('')}
@@ -145,6 +145,7 @@ document.getElementById('savePng').addEventListener('click',exportPng);document.
 document.getElementById('date').value=currentLocalDate();syncCustomerSignatureDate();render();
 })();
 </script></body></html>
+
 
 
 
